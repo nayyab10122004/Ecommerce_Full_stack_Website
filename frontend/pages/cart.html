@@ -241,7 +241,7 @@
             name: item.name,
             price: Number(item.price),
             img: item.image
-                ? (item.image.startsWith('http') ? item.image : 'http://localhost:5000/' + item.image)
+                ? (item.image.startsWith('http') ? item.image : 'https://ecommercefullstackwebsite-production.up.railway.app/' + item.image)
                 : '',
             qty: item.qty || 1,
             stock: item.stock || 99,

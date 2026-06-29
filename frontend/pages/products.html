@@ -249,7 +249,7 @@
   </footer>
  
   <script>
-    const API = 'http://localhost:5000/api';
+    const API = 'https://ecommercefullstackwebsite-production.up.railway.app/api';
  
     let products = [];
     let visibleCount = 6;
@@ -316,7 +316,7 @@
           features: p.features || [],
           brand: (p.brand || 'generic').toString().toLowerCase(),
           img: p.image
-            ? (p.image.startsWith('http') ? p.image : 'http://localhost:5000/' + p.image)
+            ? (p.image.startsWith('http') ? p.image : 'https://ecommercefullstackwebsite-production.up.railway.app/' + p.image)
             : '',
           desc: p.description || '',
           tags: ((p.category || '') + ' ' + (p.name || '') + ' ' + (p.tags || '')).toLowerCase()

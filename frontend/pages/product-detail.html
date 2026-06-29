@@ -677,12 +677,12 @@
   <div style="margin-top:40px;">
     <h3 style="font-size:20px;font-weight:700;margin-bottom:12px;">Related products</h3>
     <div class="related-grid">
-      <div class="related-card"><img src="http://localhost:5000/images/bag.png" alt="Travel Bag"> <h4>Travel Bag</h4><span class="price">Rs. 3,999</span></div>
-      <div class="related-card"><img src="http://localhost:5000/images/shorts.png" alt="Athletic Shorts"> <h4>Athletic Shorts</h4><span class="price">Rs. 1,999</span></div>
-      <div class="related-card"><img src="http://localhost:5000/images/sofa.png" alt="Modern Sofa"> <h4>Modern Sofa</h4><span class="price">Rs. 49,999</span></div>
-      <div class="related-card"><img src="http://localhost:5000/images/wallet.png" alt="Leather Wallet"> <h4>Leather Wallet</h4><span class="price">Rs. 2,499</span></div>
-      <div class="related-card"><img src="http://localhost:5000/images/pot.png" alt="Cooking Pot"> <h4>Cooking Pot</h4><span class="price">Rs. 3,999</span></div>
-      <div class="related-card"><img src="http://localhost:5000/images/jacket.jpg" alt="Denim Jacket"> <h4>Denim Jacket</h4><span class="price">Rs. 4,999</span></div>
+      <div class="related-card"><img src="https://ecommercefullstackwebsite-production.up.railway.app/images/bag.png" alt="Travel Bag"> <h4>Travel Bag</h4><span class="price">Rs. 3,999</span></div>
+      <div class="related-card"><img src="https://ecommercefullstackwebsite-production.up.railway.app/images/shorts.png" alt="Athletic Shorts"> <h4>Athletic Shorts</h4><span class="price">Rs. 1,999</span></div>
+      <div class="related-card"><img src="https://ecommercefullstackwebsite-production.up.railway.app/images/sofa.png" alt="Modern Sofa"> <h4>Modern Sofa</h4><span class="price">Rs. 49,999</span></div>
+      <div class="related-card"><img src="https://ecommercefullstackwebsite-production.up.railway.app/images/wallet.png" alt="Leather Wallet"> <h4>Leather Wallet</h4><span class="price">Rs. 2,499</span></div>
+      <div class="related-card"><img src="https://ecommercefullstackwebsite-production.up.railway.app/images/pot.png" alt="Cooking Pot"> <h4>Cooking Pot</h4><span class="price">Rs. 3,999</span></div>
+      <div class="related-card"><img src="https://ecommercefullstackwebsite-production.up.railway.app/images/jacket.jpg" alt="Denim Jacket"> <h4>Denim Jacket</h4><span class="price">Rs. 4,999</span></div>
     </div>
   </div>
 
@@ -731,7 +731,7 @@
     inp.value = v;
   }
 
-  const API = 'http://localhost:5000/api';
+  const API = 'https://ecommercefullstackwebsite-production.up.railway.app/api';
   let currentProduct = null;
 
   async function fetchProductById(id) {
@@ -778,7 +778,7 @@
 
     const imgUrl = p.image?.startsWith('http')
       ? p.image
-      : `http://localhost:5000/${p.image?.startsWith('/') ? p.image.slice(1) : p.image}`;
+      : `https://ecommercefullstackwebsite-production.up.railway.app/${p.image?.startsWith('/') ? p.image.slice(1) : p.image}`;
 
     setMainImage(imgUrl);
     setThumbnails([imgUrl, imgUrl, imgUrl, imgUrl, imgUrl]);

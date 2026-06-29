@@ -209,7 +209,7 @@
 
     <div class="form-group">
       <label>Image URL *</label>
-      <input type="url" id="pImage" placeholder="https://… or http://localhost:5000/images/…" />
+      <input type="url" id="pImage" placeholder="https://… or https://ecommercefullstackwebsite-production.up.railway.app/images/…" />
     </div>
 
     <div class="form-group">
@@ -309,7 +309,7 @@
     }
     tbody.innerHTML = products.map(p => `
       <tr>
-        <td><img src="${p.image.startsWith('http') ? p.image : 'http://localhost:5000/' + p.image}"
+        <td><img src="${p.image.startsWith('http') ? p.image : 'https://ecommercefullstackwebsite-production.up.railway.app/' + p.image}"
              alt="${p.name}" onerror="this.style.background='#f0f0f0'" /></td>
         <td style="font-weight:500;max-width:200px">${p.name}</td>
         <td><span class="badge badge-primary">${p.category}</span></td>
