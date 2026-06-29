@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product Detail — ShopVerse</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #F7FAFC;
+      color: #1C1C1C;
+      padding: 16px;
+    }
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+    @media (max-width: 768px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+    }
+
+    .gallery-main {
+      background: #fff;
+      border-radius: 20px;
+      padding: 20px;
+      border: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 380px;
+    }
+    .gallery-main img {
+      max-width: 100%;
+      max-height: 400px;
+      object-fit: contain;
+      border-radius: 12px;
+    }
+    .gallery-thumbs {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    .gallery-thumbs img {
+      width: 72px;
+      height: 72px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 2px solid transparent;
+      cursor: pointer;
+      background: #f3f4f6;
+      transition: 0.2s;
+    }
+    .gallery-thumbs img.active {
+      border-color: #2563eb;
+    }
+    .gallery-thumbs img:hover {
+      border-color: #9ca3af;
+    }
+
+    .brand-tag {
+      display: inline-block;
+      background: #eef2ff;
+      color: #2563eb;
+      font-size: 12px;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+    .product-title {
+      font-size: 26px;
+      font-weight: 700;
+      margin: 12px 0 8px;
+      line-height: 1.3;
+    }
+    .product-rating {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 14px;
+      color: #6b7280;
+    }
+    .product-rating .stars {
+      color: #f59e0b;
+      letter-spacing: 2px;
+    }
+    .product-price {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin: 16px 0 8px;
+    }
+    .product-price .current {
+      font-size: 32px;
+      font-weight: 700;
+      color: #2563eb;
+    }
+    .product-price .old {
+      font-size: 18px;
+      color: #9ca3af;
+      text-decoration: line-through;
+    }
+    .product-price .save {
+      background: #dcfce7;
+      color: #16a34a;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 2px 12px;
+      border-radius: 20px;
+    }
+    .product-desc {
+      color: #4b5563;
+      font-size: 15px;
+      line-height: 1.7;
+      margin: 12px 0 16px;
+    }
+
+    .spec-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 20px;
+      background: #f9fafb;
+      padding: 16px 20px;
+      border-radius: 14px;
+      font-size: 14px;
+      margin: 16px 0;
+    }
+    .spec-grid strong {
+      color: #374151;
+    }
+    .feature-list {
+      list-style: none;
+      margin: 12px 0;
+    }
+    .feature-list li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 0;
+      font-size: 14px;
+      color: #4b5563;
+    }
+    .feature-list li i {
+      color: #22c55e;
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 20px 0 12px;
+    }
+    .qty-selector {
+      display: flex;
+      align-items: center;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .qty-selector button {
+      background: transparent;
+      border: none;
+      padding: 8px 16px;
+      font-size: 20px;
+      cursor: pointer;
+      color: #374151;
+    }
+    .qty-selector button:hover {
+      background: #f3f4f6;
+    }
+    .qty-selector input {
+      width: 48px;
+      text-align: center;
+      border: none;
+      font-size: 16px;
+      font-weight: 500;
+      padding: 8px 0;
+      outline: none;
+    }
+    .btn-primary {
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      padding: 12px 36px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-primary:hover {
+      background: #1d4ed8;
+      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+      transform: translateY(-1px);
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #e5e7eb;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .btn-outline:hover {
+      background: #f3f4f6;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 24px;
+      border-bottom: 1px solid #e5e7eb;
+      margin-top: 30px;
+    }
+    .tabs button {
+      padding: 12px 0;
+      border: none;
+      background: transparent;
+      font-weight: 600;
+      color: #6b7280;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: 0.2s;
+      font-size: 14px;
+    }
+    .tabs button.active {
+      color: #2563eb;
+      border-bottom-color: #2563eb;
+    }
+    .tab-pane {
+      display: none;
+      padding: 20px 0;
+    }
+    .tab-pane.active {
+      display: block;
+    }
+
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 16px;
+      margin-top: 12px;
+    }
+    .related-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 12px;
+      text-align: center;
+      transition: 0.2s;
+      cursor: pointer;
+    }
+    .related-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+    .related-card img {
+      width: 100%;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      border-radius: 10px;
+      background: #f3f4f6;
+    }
+    .related-card h4 {
+      font-size: 13px;
+      font-weight: 500;
+      margin: 8px 0 4px;
+    }
+    .related-card .price {
+      font-size: 13px;
+      font-weight: 600;
+      color: #2563eb;
+    }
+
+    .cart-sidebar {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 380px;
+      height: 100vh;
+      background: #fff;
+      box-shadow: -4px 0 24px rgba(0, 0, 0, 0.1);
+      transition: right 0.3s ease;
+      z-index: 1000;
+      padding: 24px;
+      overflow-y: auto;
+    }
+    .cart-sidebar.open {
+      right: 0;
+    }
+    .cart-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 999;
+      display: none;
+    }
+    .cart-overlay.open {
+      display: block;
+    }
+    .cart-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid #f3f4f6;
+      align-items: center;
+    }
+    .cart-item img {
+      width: 56px;
+      height: 56px;
+      border-radius: 10px;
+      object-fit: cover;
+      background: #f3f4f6;
+    }
+    .cart-item .info {
+      flex: 1;
+    }
+    .cart-item .info h4 {
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .cart-item .info p {
+      font-size: 12px;
+      color: #6b7280;
+    }
+    .cart-item .qty {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #065f46;
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 12px;
+      font-weight: 500;
+      opacity: 0;
+      transition: 0.4s ease;
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    .toast.error {
+      background: #dc2626;
+    }
+
+    .footer-section {
+      margin-top: 40px;
+      border-top: 1px solid #e5e7eb;
+      padding-top: 30px;
+    }
+    .discount-banner {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #fff;
+      border-radius: 16px;
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+    .discount-banner h3 {
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .discount-banner p {
+      font-size: 14px;
+      opacity: 0.85;
+    }
+    .discount-banner .btn-shop {
+      background: #f59e0b;
+      color: #fff;
+      border: none;
+      padding: 10px 30px;
+      border-radius: 30px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .discount-banner .btn-shop:hover {
+      background: #d97706;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr repeat(4, 1fr);
+      gap: 30px;
+      padding: 20px 0;
+    }
+    .footer-grid .brand h3 {
+      color: #2563eb;
+      font-size: 22px;
+    }
+    .footer-grid .brand p {
+      color: #6b7280;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+    .footer-grid .col h4 {
+      font-size: 15px;
+      margin-bottom: 12px;
+    }
+    .footer-grid .col ul {
+      list-style: none;
+    }
+    .footer-grid .col ul li {
+      margin-bottom: 8px;
+    }
+    .footer-grid .col ul li a {
+      text-decoration: none;
+      color: #6b7280;
+      font-size: 14px;
+    }
+    .footer-grid .col ul li a:hover {
+      color: #2563eb;
+    }
+    .footer-bottom {
+      border-top: 1px solid #e5e7eb;
+      padding: 16px 0;
+      text-align: center;
+      font-size: 14px;
+      color: #6b7280;
+    }
+    @media (max-width: 768px) {
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .discount-banner {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+    .cart-badge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: #ef4444;
+      color: #fff;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cart-icon-wrap {
+      position: relative;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div id="toast" class="toast"><i class="fa-solid fa-check-circle"></i> <span id="toastMsg">Added!</span></div>
+
+<div id="cartOverlay" class="cart-overlay" onclick="closeCart()"></div>
+<div id="cartSidebar" class="cart-sidebar">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+    <h2 style="font-size:20px;">Your Cart</h2>
+    <button onclick="closeCart()" style="background:none;border:none;font-size:24px;cursor:pointer;">✕</button>
+  </div>
+  <div id="cartItems">
+    <p style="color:#9ca3af;text-align:center;padding:40px 0;">Your cart is empty</p>
+  </div>
+  <div id="cartTotal" style="border-top:1px solid #e5e7eb;padding-top:16px;margin-top:12px;display:none;">
+    <div style="display:flex;justify-content:space-between;font-weight:700;font-size:18px;">
+      <span>Total</span>
+      <span id="totalPrice">$0.00</span>
+    </div>
+    <button style="width:100%;background:#2563eb;color:#fff;border:none;padding:14px;border-radius:10px;font-weight:600;margin-top:12px;cursor:pointer;">Proceed to Checkout</button>
+  </div>
+</div>
+
+<div style="background:#fff;border-bottom:1px solid #e5e7eb;padding:10px 0;">
+  <div class="container" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:13px;color:#6b7280;">
+    <div style="display:flex;gap:20px;flex-wrap:wrap;">
+      <a href="#" style="color:#6b7280;text-decoration:none;">All category</a>
+      <a href="#" style="color:#6b7280;text-decoration:none;">Hot offers</a>
+      <a href="#" style="color:#6b7280;text-decoration:none;">Gift boxes</a>
+      <a href="#" style="color:#6b7280;text-decoration:none;">Projects</a>
+      <a href="#" style="color:#6b7280;text-decoration:none;">Help</a>
+    </div>
+    <div style="display:flex;gap:16px;align-items:center;">
+      <span>English, USD</span>
+      <span>Ship to 🇩🇪</span>
+      <a href="cart.html" class="cart-icon-wrap">
+  <i class="fa-solid fa-cart-shopping" style="font-size:18px;"></i>
+  <span id="cartBadge" class="cart-badge" style="display:none;">0</span>
+</a>
+
+    </div>
+  </div>
+</div>
+
+<div class="container" style="padding:16px 0;font-size:13px;color:#9ca3af;">
+  <a href="#" style="color:#2563eb;text-decoration:none;">Home</a> &gt;
+  <a href="#" style="color:#2563eb;text-decoration:none;">Clothings</a> &gt;
+  <a href="#" style="color:#2563eb;text-decoration:none;">Men's wear</a> &gt;
+  <span style="color:#6b7280;">Summer clothing</span>
+</div>
+
+<main class="container">
+  <div class="grid-2">
+    <div>
+      <div class="gallery-main">
+        <img id="mainImg" src="https://placehold.co/600x400/f3f4f6/6b7280?text=Product+Image" alt="Mens long sleeve cotton base layer shirt displayed on a light gray studio backdrop with soft lighting and a calm minimalist tone" />
+      </div>
+      <div class="gallery-thumbs" id="thumbnails">
+        <img src="https://placehold.co/100x100/f3f4f6/6b7280?text=1" class="active" alt="Thumbnail one of the product shirt" onclick="changeMain(this)" />
+        <img src="https://placehold.co/100x100/e5e7eb/6b7280?text=2" alt="Thumbnail two of the product shirt" onclick="changeMain(this)" />
+        <img src="https://placehold.co/100x100/d1d5db/6b7280?text=3" alt="Thumbnail three of the product shirt" onclick="changeMain(this)" />
+        <img src="https://placehold.co/100x100/f3f4f6/6b7280?text=4" alt="Thumbnail four of the product shirt" onclick="changeMain(this)" />
+        <img src="https://placehold.co/100x100/e5e7eb/6b7280?text=5" alt="Thumbnail five of the product shirt" onclick="changeMain(this)" />
+      </div>
+    </div>
+
+    <div>
+      <span class="brand-tag"><i class="fa-solid fa-check-circle" style="margin-right:4px;"></i> In Stock</span>
+      <h1 class="product-title">Mens Long Sleeve T-shirt Cotton Base Layer Slim Muscle</h1>
+      <div class="product-rating">
+        <span class="stars">★★★★★</span>
+        <span style="font-weight:600;color:#f59e0b;">9.3</span>
+        <span>|</span>
+        <span><i class="fa-regular fa-comment"></i> 32 reviews</span>
+        <span>|</span>
+        <span><i class="fa-regular fa-bag-shopping"></i> 154 sold</span>
+      </div>
+
+      <div class="product-price">
+        <span class="current">$98.00</span>
+        <span class="old">$129.00</span>
+        <span class="save">Save 24%</span>
+      </div>
+
+      <p class="product-desc">
+        Premium 100% combed cotton fabric, slim fit design for athletic build, reinforced stitching for durability. Machine washable, quick-dry material.
+      </p>
+
+      <div class="spec-grid">
+        <div><strong>Model</strong> #8786867</div>
+        <div><strong>Style</strong> Classic style</div>
+        <div><strong>Certificate</strong> ISO-898921212</div>
+        <div><strong>Size</strong> 34mm x 450mm x 19mm</div>
+        <div><strong>Memory</strong> 36GB RAM</div>
+      </div>
+
+      <ul class="feature-list">
+        <li><i class="fa-solid fa-check"></i> Some great feature name here</li>
+        <li><i class="fa-solid fa-check"></i> Lorem ipsum dolor sit amet, consectetur</li>
+        <li><i class="fa-solid fa-check"></i> Duis aute irure dolor in reprehenderit</li>
+        <li><i class="fa-solid fa-check"></i> Some great feature name here</li>
+      </ul>
+
+      <div style="display:flex;gap:24px;flex-wrap:wrap;margin:12px 0 8px;">
+        <div>
+          <span style="font-weight:500;font-size:14px;">Size:</span>
+          <div style="display:flex;gap:8px;margin-top:6px;">
+            <button class="size-btn" style="padding:6px 14px;border:1px solid #d1d5db;border-radius:8px;background:#fff;cursor:pointer;font-weight:500;">S</button>
+            <button class="size-btn active" style="padding:6px 14px;border:2px solid #2563eb;border-radius:8px;background:#eff6ff;color:#2563eb;cursor:pointer;font-weight:600;">M</button>
+            <button class="size-btn" style="padding:6px 14px;border:1px solid #d1d5db;border-radius:8px;background:#fff;cursor:pointer;font-weight:500;">L</button>
+            <button class="size-btn" style="padding:6px 14px;border:1px solid #d1d5db;border-radius:8px;background:#fff;cursor:pointer;font-weight:500;">XL</button>
+          </div>
+        </div>
+        <div>
+          <span style="font-weight:500;font-size:14px;">Color:</span>
+          <div style="display:flex;gap:8px;margin-top:6px;">
+            <span style="display:inline-block;width:32px;height:32px;border-radius:50%;background:#1a1a1a;border:2px solid #2563eb;cursor:pointer;"></span>
+            <span style="display:inline-block;width:32px;height:32px;border-radius:50%;background:#fff;border:2px solid #d1d5db;cursor:pointer;"></span>
+            <span style="display:inline-block;width:32px;height:32px;border-radius:50%;background:#6b7280;border:2px solid #d1d5db;cursor:pointer;"></span>
+            <span style="display:inline-block;width:32px;height:32px;border-radius:50%;background:#1e3a5f;border:2px solid #d1d5db;cursor:pointer;"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <div class="qty-selector">
+          <button onclick="changeQty(-1)">−</button>
+          <input type="number" id="qtyInput" value="1" min="1" max="99" />
+          <button onclick="changeQty(1)">+</button>
+        </div>
+        <button class="btn-primary" onclick="addToCart()"><i class="fa-solid fa-cart-plus"></i> Add to Cart</button>
+        <button class="btn-outline"><i class="fa-regular fa-heart"></i></button>
+      </div>
+
+      <div style="font-size:13px;color:#6b7280;margin-top:8px;display:flex;flex-wrap:wrap;gap:12px;">
+        <span><strong>Customization:</strong> Customized logo and design</span>
+        <span><strong>Protection:</strong> Refund Policy</span>
+        <span><strong>Warranty:</strong> 2 years full warranty</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:40px;">
+    <div class="tabs">
+      <button class="active" data-tab="desc">Description</button>
+      <button data-tab="reviews">Reviews (32)</button>
+      <button data-tab="shipping">Shipping</button>
+      <button data-tab="seller">About seller</button>
+    </div>
+    <div id="tab-desc" class="tab-pane active">
+      <p style="color:#4b5563;line-height:1.7;font-size:15px;">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+      </p>
+      <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:8px 20px;background:#f9fafb;padding:16px 20px;border-radius:14px;font-size:14px;">
+        <div><strong>Model</strong> #8786867</div>
+        <div><strong>Style</strong> Classic style</div>
+        <div><strong>Certificate</strong> ISO-898921212</div>
+        <div><strong>Size</strong> S, M, L, XL, XXL</div>
+        <div><strong>Color</strong> Black, White, Navy, Gray</div>
+      </div>
+    </div>
+    <div id="tab-reviews" class="tab-pane">
+      <div style="padding:12px 0;border-bottom:1px solid #f3f4f6;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div><strong>Michael K.</strong> <span style="color:#f59e0b;">★★★★★</span></div>
+          <span style="font-size:13px;color:#9ca3af;">2 days ago</span>
+        </div>
+        <p style="color:#4b5563;font-size:14px;margin-top:4px;">Excellent fabric quality! The slim fit muscle cut looks perfect. Highly recommended.</p>
+      </div>
+      <div style="padding:12px 0;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div><strong>Ahmed J.</strong> <span style="color:#f59e0b;">★★★★☆</span></div>
+          <span style="font-size:13px;color:#9ca3af;">1 week ago</span>
+        </div>
+        <p style="color:#4b5563;font-size:14px;margin-top:4px;">Very soft and stretchable. Delivery to Germany was super fast.</p>
+      </div>
+    </div>
+    <div id="tab-shipping" class="tab-pane">
+      <p style="color:#4b5563;line-height:1.7;">Free standard shipping on orders over $100. Delivery in 5-7 business days. Express delivery available for $15.</p>
+    </div>
+    <div id="tab-seller" class="tab-pane">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+        <div style="width:48px;height:48px;background:#ccfbf1;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#0d9488;">G</div>
+        <div><h4 style="font-size:16px;">Guanjoi Trading LLC</h4><span style="font-size:13px;color:#22c55e;">✓ Verified Seller</span></div>
+      </div>
+      <p style="color:#4b5563;">Professional wholesale supplier specializing in high-quality men's and women's apparel. Over 10,000 satisfied customers worldwide.</p>
+    </div>
+  </div>
+
+  <div style="margin-top:40px;">
+    <h3 style="font-size:20px;font-weight:700;margin-bottom:12px;">Related products</h3>
+    <div class="related-grid">
+      <div class="related-card"><img src="http://localhost:5000/images/bag.png" alt="Travel Bag"> <h4>Travel Bag</h4><span class="price">Rs. 3,999</span></div>
+      <div class="related-card"><img src="http://localhost:5000/images/shorts.png" alt="Athletic Shorts"> <h4>Athletic Shorts</h4><span class="price">Rs. 1,999</span></div>
+      <div class="related-card"><img src="http://localhost:5000/images/sofa.png" alt="Modern Sofa"> <h4>Modern Sofa</h4><span class="price">Rs. 49,999</span></div>
+      <div class="related-card"><img src="http://localhost:5000/images/wallet.png" alt="Leather Wallet"> <h4>Leather Wallet</h4><span class="price">Rs. 2,499</span></div>
+      <div class="related-card"><img src="http://localhost:5000/images/pot.png" alt="Cooking Pot"> <h4>Cooking Pot</h4><span class="price">Rs. 3,999</span></div>
+      <div class="related-card"><img src="http://localhost:5000/images/jacket.jpg" alt="Denim Jacket"> <h4>Denim Jacket</h4><span class="price">Rs. 4,999</span></div>
+    </div>
+  </div>
+
+  <div class="discount-banner">
+    <div>
+      <h3>Super discount on more than 100 USD</h3>
+      <p>Have you ever finally just write dummy info</p>
+    </div>
+    <button class="btn-shop" onclick="alert('Shop now!')">Shop now</button>
+  </div>
+</main>
+
+<footer style="background:#fff;border-top:1px solid #e5e7eb;margin-top:30px;padding:30px 0 10px;">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="brand">
+        <h3>ShopVerse</h3>
+        <p>Best information about the company gives here but now lorem ipsum is</p>
+      </div>
+      <div class="col"><h4>About</h4><ul><li><a href="#">About Us</a></li><li><a href="#">Find store</a></li><li><a href="#">Categories</a></li><li><a href="#">Blogs</a></li></ul></div>
+      <div class="col"><h4>Partnership</h4><ul><li><a href="#">About Us</a></li><li><a href="#">Find store</a></li><li><a href="#">Categories</a></li><li><a href="#">Blogs</a></li></ul></div>
+      <div class="col"><h4>Information</h4><ul><li><a href="#">Help Center</a></li><li><a href="#">Money Refund</a></li><li><a href="#">Shipping</a></li><li><a href="#">Contact us</a></li></ul></div>
+      <div class="col"><h4>For users</h4><ul><li><a href="#">Login</a></li><li><a href="#">Register</a></li><li><a href="#">Settings</a></li><li><a href="#">My Orders</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">© 2026 ShopVerse. All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+  let cart = [];
+  let selectedSize = 'M';
+
+  function showToast(msg, isError = false) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    t.className = 'toast' + (isError ? ' error' : '');
+    setTimeout(() => t.classList.add('show'), 50);
+    setTimeout(() => t.classList.remove('show'), 2600);
+  }
+
+  function changeQty(delta) {
+    const inp = document.getElementById('qtyInput');
+    let v = parseInt(inp.value) + delta;
+    if (v < 1) v = 1;
+    if (v > 99) v = 99;
+    inp.value = v;
+  }
+
+  const API = 'http://localhost:5000/api';
+  let currentProduct = null;
+
+  async function fetchProductById(id) {
+    const normalized = (id && id !== ':id') ? id : null;
+    if (!normalized) {
+      throw new Error('Missing or invalid product id in URL');
+    }
+
+    const res = await fetch(API + '/products/' + encodeURIComponent(normalized));
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Product fetch failed');
+    return data.product;
+  }
+
+
+  function setMainImage(src) {
+    document.getElementById('mainImg').src = src;
+  }
+
+  function setThumbnails(images) {
+    const box = document.getElementById('thumbnails');
+    const imgs = (images && images.length ? images : []).slice(0, 5);
+    const finalImgs = imgs.length ? imgs : ['https://placehold.co/600x400?text=No+Image'];
+
+    box.innerHTML = finalImgs.map((src, idx) => {
+      const cls = idx === 0 ? 'active' : '';
+      return `
+        <img src="${src}" class="${cls}" onclick="changeMain(this)" />
+      `;
+    }).join('');
+  }
+
+  function starsText(rating) {
+    const full = Math.round(rating);
+    return '★'.repeat(full) + '☆'.repeat(5 - full);
+  }
+
+  function formatPriceUSD(p) {
+    return `$${Number(p).toFixed(2)}`;
+  }
+
+  function populateProductUI(p) {
+    currentProduct = p;
+
+    const imgUrl = p.image?.startsWith('http')
+      ? p.image
+      : `http://localhost:5000/${p.image?.startsWith('/') ? p.image.slice(1) : p.image}`;
+
+    setMainImage(imgUrl);
+    setThumbnails([imgUrl, imgUrl, imgUrl, imgUrl, imgUrl]);
+
+    document.querySelector('.product-title').textContent = p.name;
+
+    const ratingEl = document.querySelector('.product-rating');
+    if (ratingEl) {
+      const starsSpan = ratingEl.querySelector('.stars');
+      if (starsSpan) starsSpan.textContent = starsText(p.rating);
+      const scoreEl = ratingEl.querySelector('span[style*="color:#f59e0b"]');
+      if (scoreEl) scoreEl.textContent = Number(p.rating).toFixed(1);
+      const reviewsEl = ratingEl.querySelectorAll('span')[2];
+   
+      const allSpans = ratingEl.querySelectorAll('span');
+      allSpans.forEach(s => {
+        if (s.textContent && s.textContent.includes('reviews')) {
+          s.innerHTML = `<i class="fa-regular fa-comment"></i> ${p.numReviews ?? 0} reviews`;
+        }
+        if (s.textContent && s.textContent.includes('sold')) {
+          s.textContent = `${(p.stock ? 1 : 0) + 154} sold`; // fallback; backend has no sold field
+        }
+      });
+    }
+
+    document.querySelector('.product-desc').textContent = p.description;
+
+    const brandTag = document.querySelector('.brand-tag');
+    if (brandTag) {
+      const inStock = (p.stock ?? 0) > 0;
+      brandTag.textContent = inStock ? 'In Stock' : 'Out of Stock';
+      brandTag.style.background = inStock ? '#eef2ff' : '#fff1f2';
+      brandTag.style.color = inStock ? '#2563eb' : '#dc2626';
+    }
+
+    const currentPriceEl = document.querySelector('.product-price .current');
+    if (currentPriceEl) currentPriceEl.textContent = formatPriceUSD(p.price);
+
+const oldEl = document.querySelector('.product-price .old');
+const saveEl = document.querySelector('.product-price .save');
+
+if (p.oldPrice && p.oldPrice > p.price) {
+    if (oldEl) {
+        oldEl.style.display = '';
+        oldEl.textContent = formatPriceUSD(p.oldPrice);
+    }
+    if (saveEl) {
+        const discount = Math.round((1 - p.price / p.oldPrice) * 100);
+        saveEl.style.display = '';
+        saveEl.textContent = `Save ${discount}%`;
+    }
+} else {
+    if (oldEl) oldEl.style.display = 'none';
+    if (saveEl) saveEl.style.display = 'none';
+}
+
+    const specStrongEls = document.querySelectorAll('.spec-grid strong');
+    specStrongEls.forEach(el => {
+      const key = el.textContent.trim();
+      const parent = el.parentElement;
+      if (!parent) return;
+      if (key === 'Model') parent.lastChild.nodeValue = ` #${p._id?.slice(-6) || ''}`;
+      if (key === 'Certificate') parent.lastChild.nodeValue = ` ${p.category || ''}`;
+      if (key === 'Style') parent.lastChild.nodeValue = ` ${p.category || ''}`;
+    });
+
+    updateCartUI();
+  }
+
+ function addToCart() {
+    if (!currentProduct) { showToast('Loading product...', true); return; }
+    const qty = parseInt(document.getElementById('qtyInput').value) || 1;
+    
+    let svCart = JSON.parse(localStorage.getItem('sv_cart') || '[]');
+    const existing = svCart.findIndex(i => i._id === currentProduct._id);
+    if (existing > -1) {
+        svCart[existing].qty += qty;
+    } else {
+        svCart.push({
+            _id: currentProduct._id,
+            name: currentProduct.name,
+            price: currentProduct.price,
+            image: currentProduct.image,
+            qty: qty,
+            stock: currentProduct.stock || 99
+        });
+    }
+    localStorage.setItem('sv_cart', JSON.stringify(svCart));
+    
+    const totalItems = svCart.reduce((s, i) => s + i.qty, 0);
+    const badge = document.getElementById('cartBadge');
+    if (badge) { badge.textContent = totalItems; badge.style.display = 'flex'; }
+    
+    showToast('Added to cart!');
+}
+
+
+  function updateCartUI() {
+    const badge = document.getElementById('cartBadge');
+    const totalItems = cart.reduce((s, i) => s + i.qty, 0);
+    if (totalItems > 0) {
+      badge.style.display = 'flex';
+      badge.textContent = totalItems;
+    } else {
+      badge.style.display = 'none';
+    }
+
+    const container = document.getElementById('cartItems');
+    const totalDiv = document.getElementById('cartTotal');
+    const totalPriceEl = document.getElementById('totalPrice');
+
+    if (cart.length === 0) {
+      container.innerHTML = '<p style="color:#9ca3af;text-align:center;padding:40px 0;">Your cart is empty</p>';
+      totalDiv.style.display = 'none';
+      return;
+    }
+
+    totalDiv.style.display = 'block';
+    let html = '';
+    let total = 0;
+    cart.forEach((item, idx) => {
+      total += item.total;
+      html += `
+        <div class="cart-item">
+          <img src="https://placehold.co/56x56/f3f4f6/6b7280?text=T" />
+          <div class="info">
+            <h4>${item.name}</h4>
+            <p>Size: ${item.size} · Qty: ${item.qty}</p>
+          </div>
+          <div class="qty">$${item.total.toFixed(2)}</div>
+          <button onclick="removeItem(${idx})" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:16px;">✕</button>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+    totalPriceEl.textContent = '$' + total.toFixed(2);
+  }
+
+  function removeItem(idx) {
+    cart.splice(idx, 1);
+    updateCartUI();
+    showToast('Removed from cart', true);
+  }
+
+  function toggleCart() {
+    document.getElementById('cartSidebar').classList.toggle('open');
+    document.getElementById('cartOverlay').classList.toggle('open');
+  }
+  function closeCart() {
+    document.getElementById('cartSidebar').classList.remove('open');
+    document.getElementById('cartOverlay').classList.remove('open');
+  }
+
+  function changeMain(el) {
+    document.querySelectorAll('.gallery-thumbs img').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('mainImg').src = el.src;
+  }
+
+  document.querySelectorAll('.tabs button').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      const target = this.dataset.tab;
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+      document.getElementById('tab-' + target).classList.add('active');
+    });
+  });
+
+  document.querySelectorAll('.size-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.size-btn').forEach(b => {
+        b.style.border = '1px solid #d1d5db';
+        b.style.background = '#fff';
+        b.style.color = '#1c1c1c';
+        b.style.fontWeight = '500';
+      });
+      this.style.border = '2px solid #2563eb';
+      this.style.background = '#eff6ff';
+      this.style.color = '#2563eb';
+      this.style.fontWeight = '600';
+      selectedSize = this.textContent.trim();
+    });
+  });
+
+  (async function initProductDetail() {
+    updateCartUI();
+
+    const id = new URLSearchParams(window.location.search).get('id');
+    if (!id) {
+      showToast('Missing product id', true);
+      return;
+    }
+
+    try {
+      const product = await fetchProductById(id);
+      populateProductUI(product);
+    } catch (e) {
+      showToast(e.message || 'Failed to load product', true);
+    }
+  })();
+</script>
+</body>
+</html>

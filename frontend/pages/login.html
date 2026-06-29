@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — ShopVerse</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #F7FAFC; color: #1C1C1C; min-height: 100vh; display: flex; flex-direction: column; }
+
+    .navbar { background: white; padding: 12px 20px; border-bottom: 1px solid #E3E8EE; }
+    .navbar-inner { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; }
+    .nav-logo { font-size: 24px; font-weight: bold; color: #127FFF; text-decoration: none; }
+    .nav-logo span { color: #1C1C1C; }
+    .nav-links { display: flex; gap: 20px; }
+    .nav-links a { color: #505050; text-decoration: none; font-size: 14px; }
+    .nav-links a:hover { color: #127FFF; }
+
+    .main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+
+    .auth-card { background: white; border: 1px solid #E3E8EE; border-radius: 16px; padding: 36px; width: 100%; max-width: 420px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+    .auth-card h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .auth-card .subtitle { color: #8B96A5; font-size: 14px; margin-bottom: 24px; }
+
+    .auth-tabs { display: flex; border-bottom: 2px solid #E3E8EE; margin-bottom: 24px; }
+    .auth-tab { flex: 1; padding: 10px; text-align: center; font-size: 14px; font-weight: 600; color: #8B96A5; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: 0.2s; }
+    .auth-tab.active { color: #127FFF; border-bottom-color: #127FFF; }
+
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 5px; }
+    .form-group input {
+      width: 100%; padding: 10px 14px; border: 1.5px solid #E3E8EE;
+      border-radius: 8px; font-size: 14px; font-family: inherit;
+      outline: none; transition: border 0.2s;
+    }
+    .form-group input:focus { border-color: #127FFF; }
+
+    .form-error { background: #FEE2E2; color: #DC2626; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 14px; }
+    .form-success { background: #DCFCE7; color: #16A34A; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 14px; }
+    .hidden { display: none !important; }
+
+    .btn { width: 100%; padding: 11px; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; border: none; font-family: inherit; transition: all 0.2s; }
+    .btn-primary { background: #127FFF; color: white; }
+    .btn-primary:hover { background: #0B66D6; }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .divider { display: flex; align-items: center; gap: 10px; margin: 20px 0; color: #8B96A5; font-size: 13px; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #E3E8EE; }
+
+    .demo-box { background: #EBF4FF; border: 1px solid #BFDBFE; border-radius: 8px; padding: 12px 14px; margin-bottom: 18px; font-size: 13px; }
+    .demo-box strong { color: #127FFF; display: block; margin-bottom: 4px; }
+    .demo-box span { color: #374151; }
+    .demo-btn { background: #EBF4FF; color: #127FFF; border: 1.5px solid #127FFF; width: 100%; padding: 8px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 8px; transition: 0.2s; }
+    .demo-btn:hover { background: #127FFF; color: white; }
+
+    .footer { text-align: center; padding: 20px; font-size: 13px; color: #8B96A5; border-top: 1px solid #E3E8EE; background: white; }
+
+    .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px); background: #065f46; color: #fff; padding: 12px 28px; border-radius: 12px; font-weight: 500; opacity: 0; transition: 0.4s ease; z-index: 2000; font-size: 14px; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.error { background: #DC2626; }
+  </style>
+</head>
+<body>
+
+<div id="toast" class="toast"></div>
+
+<div class="navbar">
+  <div class="navbar-inner">
+    <a href="../index.html" class="nav-logo">Shop<span>Verse</span></a>
+    <div class="nav-links">
+      <a href="products.html">Products</a>
+      <a href="cart.html">🛒 Cart</a>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="auth-card">
+
+    <h2>Welcome to ShopVerse</h2>
+    <p class="subtitle">Login or create an account to continue</p>
+
+    <!-- TABS -->
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="loginTab" onclick="switchTab('login')">Login</div>
+      <div class="auth-tab" id="signupTab" onclick="switchTab('signup')">Sign Up</div>
+    </div>
+
+    <div id="authErr" class="form-error hidden"></div>
+    <div id="authSuccess" class="form-success hidden"></div>
+
+    <div id="loginForm">
+
+      <div class="demo-box">
+        <strong>🔑 Demo Credentials</strong>
+        <span>Admin: admin@shopverse.com / admin123</span><br>
+        <span>User: nayyab@example.com / user123</span>
+        <button class="demo-btn" onclick="fillAdmin()">Fill Admin Credentials</button>
+      </div>
+
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="loginEmail" placeholder="you@example.com" />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPwd" placeholder="••••••••"
+               onkeydown="if(event.key==='Enter') handleLogin()" />
+      </div>
+      <button class="btn btn-primary" id="loginBtn" onclick="handleLogin()">Login</button>
+    </div>
+
+    <div id="signupForm" class="hidden">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="signupName" placeholder="Your Name" />
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="signupEmail" placeholder="you@example.com" />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="signupPwd" placeholder="Min 6 characters"
+               onkeydown="if(event.key==='Enter') handleSignup()" />
+      </div>
+      <button class="btn btn-primary" id="signupBtn" onclick="handleSignup()">Create Account</button>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer">© 2026 ShopVerse. All rights reserved.</div>
+
+<script>
+  const API = 'http://localhost:5000/api';
+
+  function showToast(msg, type = '') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast' + (type === 'error' ? ' error' : '');
+    setTimeout(() => t.classList.add('show'), 50);
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  function switchTab(tab) {
+    document.getElementById('authErr').classList.add('hidden');
+    document.getElementById('authSuccess').classList.add('hidden');
+    if (tab === 'login') {
+      document.getElementById('loginTab').classList.add('active');
+      document.getElementById('signupTab').classList.remove('active');
+      document.getElementById('loginForm').classList.remove('hidden');
+      document.getElementById('signupForm').classList.add('hidden');
+    } else {
+      document.getElementById('signupTab').classList.add('active');
+      document.getElementById('loginTab').classList.remove('active');
+      document.getElementById('signupForm').classList.remove('hidden');
+      document.getElementById('loginForm').classList.add('hidden');
+    }
+  }
+
+  function fillAdmin() {
+    document.getElementById('loginEmail').value = 'admin@shopverse.com';
+    document.getElementById('loginPwd').value = 'admin123';
+  }
+
+  async function handleLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPwd').value;
+    const errEl = document.getElementById('authErr');
+    errEl.classList.add('hidden');
+
+    if (!email || !password) {
+      errEl.textContent = 'Please fill in all fields.';
+      errEl.classList.remove('hidden');
+      return;
+    }
+
+    const btn = document.getElementById('loginBtn');
+    btn.disabled = true; btn.textContent = 'Logging in…';
+
+    try {
+      const res = await fetch(API + '/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Login failed');
+
+      localStorage.setItem('sv_token', data.token);
+      localStorage.setItem('sv_user', JSON.stringify(data.user));
+
+      showToast('Welcome back, ' + data.user.name + '! 🎉');
+
+      setTimeout(() => {
+        if (data.user.role === 'admin') {
+          window.location.href = 'admin.html';
+        } else {
+          window.location.href = '../index.html';
+        }
+      }, 800);
+
+    } catch(err) {
+      errEl.textContent = err.message;
+      errEl.classList.remove('hidden');
+    } finally {
+      btn.disabled = false; btn.textContent = 'Login';
+    }
+  }
+
+  async function handleSignup() {
+    const name = document.getElementById('signupName').value.trim();
+    const email = document.getElementById('signupEmail').value.trim();
+    const password = document.getElementById('signupPwd').value;
+    const errEl = document.getElementById('authErr');
+    const successEl = document.getElementById('authSuccess');
+    errEl.classList.add('hidden');
+    successEl.classList.add('hidden');
+
+    if (!name || !email || !password) {
+      errEl.textContent = 'Please fill in all fields.';
+      errEl.classList.remove('hidden');
+      return;
+    }
+    if (password.length < 6) {
+      errEl.textContent = 'Password must be at least 6 characters.';
+      errEl.classList.remove('hidden');
+      return;
+    }
+
+    const btn = document.getElementById('signupBtn');
+    btn.disabled = true; btn.textContent = 'Creating account…';
+
+    try {
+      const res = await fetch(API + '/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Signup failed');
+
+      localStorage.setItem('sv_token', data.token);
+      localStorage.setItem('sv_user', JSON.stringify(data.user));
+
+      successEl.textContent = 'Account created! Redirecting…';
+      successEl.classList.remove('hidden');
+      showToast('Welcome, ' + data.user.name + '! 🎉');
+
+      setTimeout(() => { window.location.href = '/index.html'; }, 800);
+
+    } catch(err) {
+      errEl.textContent = err.message;
+      errEl.classList.remove('hidden');
+    } finally {
+      btn.disabled = false; btn.textContent = 'Create Account';
+    }
+  }
+
+  (function() {
+    const token = localStorage.getItem('sv_token');
+    const user = JSON.parse(localStorage.getItem('sv_user') || 'null');
+    if (token && user) {
+      if (user.role === 'admin') window.location.href = 'admin.html';
+      else window.location.href = '../index.html';
+    }
+  })();
+</script>
+</body>
+</html>

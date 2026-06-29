@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel — ShopVerse</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #F7FAFC; color: #1C1C1C; }
+
+    .navbar { background: white; padding: 10px 20px; border-bottom: 1px solid #E3E8EE; margin-bottom: 24px; }
+    .navbar-inner { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; }
+    .nav-logo { font-size: 24px; font-weight: bold; color: #127FFF; text-decoration: none; }
+    .nav-logo span { color: #1C1C1C; }
+    .nav-links { display: flex; gap: 20px; align-items: center; }
+    .nav-links a { color: #505050; text-decoration: none; font-size: 14px; font-weight: 500; }
+    .nav-links a:hover { color: #127FFF; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 40px; }
+
+    .empty-state { text-align: center; padding: 80px 20px; background: white; border: 1px solid #E3E8EE; border-radius: 12px; }
+    .empty-state .icon { font-size: 48px; margin-bottom: 16px; }
+    .empty-state h3 { font-size: 20px; margin-bottom: 8px; }
+    .empty-state p { color: #8B96A5; font-size: 14px; }
+    .hidden { display: none !important; }
+
+    .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+    .admin-header h1 { font-size: 22px; font-weight: 700; color: #1C1C1C; }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+    .stat-card { background: white; border: 1px solid #E3E8EE; border-radius: 12px; padding: 20px; display: flex; align-items: center; gap: 16px; transition: box-shadow 0.2s; }
+    .stat-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+    .stat-icon { font-size: 28px; width: 52px; height: 52px; background: #EBF4FF; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .stat-val { font-size: 24px; font-weight: 700; color: #1C1C1C; line-height: 1.2; }
+    .stat-label { font-size: 13px; color: #8B96A5; margin-top: 2px; }
+
+    .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 12px; }
+    .table-header h3 { font-size: 16px; font-weight: 700; }
+    .search-input { padding: 8px 14px; border: 1.5px solid #E3E8EE; border-radius: 8px; font-size: 14px; font-family: inherit; min-width: 220px; outline: none; transition: border 0.2s; }
+    .search-input:focus { border-color: #127FFF; }
+
+    .admin-table-wrap { background: white; border: 1px solid #E3E8EE; border-radius: 12px; overflow: hidden; }
+    .admin-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .admin-table thead { background: #F7FAFC; }
+    .admin-table th { padding: 12px 16px; text-align: left; font-weight: 600; color: #505050; font-size: 13px; border-bottom: 1px solid #E3E8EE; white-space: nowrap; }
+    .admin-table td { padding: 12px 16px; border-bottom: 1px solid #F7FAFC; vertical-align: middle; }
+    .admin-table tr:last-child td { border-bottom: none; }
+    .admin-table tr:hover td { background: #FAFBFC; }
+    .admin-table img { width: 48px; height: 48px; object-fit: cover; border-radius: 8px; background: #f3f4f6; }
+
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+    .badge-primary { background: #EBF4FF; color: #127FFF; }
+    .badge-success { background: #DCFCE7; color: #16A34A; }
+    .badge-danger  { background: #FEE2E2; color: #DC2626; }
+
+    .btn { padding: 8px 18px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; font-family: inherit; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-primary { background: #127FFF; color: white; }
+    .btn-primary:hover { background: #0B66D6; }
+    .btn-outline { background: white; color: #127FFF; border: 1.5px solid #127FFF; }
+    .btn-outline:hover { background: #EBF4FF; }
+    .btn-danger { background: white; color: #DC2626; border: 1.5px solid #DC2626; }
+    .btn-danger:hover { background: #FEE2E2; }
+    .btn-sm { padding: 5px 12px; font-size: 13px; }
+    .btn-block { width: 100%; justify-content: center; padding: 12px; }
+
+    .spinner { width: 28px; height: 28px; border: 3px solid #E3E8EE; border-top-color: #127FFF; border-radius: 50%; animation: spin 0.7s linear infinite; }
+    .loader-wrap { display: flex; justify-content: center; padding: 20px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.45); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .modal { background: white; border-radius: 16px; padding: 30px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; position: relative; animation: slideUp 0.25s ease; }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal-close { position: absolute; top: 16px; right: 20px; background: none; border: none; font-size: 22px; cursor: pointer; color: #8B96A5; line-height: 1; }
+    .modal-close:hover { color: #1C1C1C; }
+    .modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+    .modal-sub { color: #8B96A5; font-size: 13px; margin-bottom: 20px; }
+
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 5px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 9px 12px; border: 1.5px solid #E3E8EE; border-radius: 8px;
+      font-size: 14px; font-family: inherit; outline: none; transition: border 0.2s; background: white; color: #1C1C1C;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #127FFF; }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-error { background: #FEE2E2; color: #DC2626; padding: 10px 14px; border-radius: 8px; font-size: 13px; }
+
+    .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px); background: #065f46; color: #fff; padding: 12px 28px; border-radius: 12px; font-weight: 500; opacity: 0; transition: 0.4s ease; z-index: 2000; font-size: 14px; white-space: nowrap; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.error { background: #DC2626; }
+
+    @media (max-width: 900px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .admin-table th:nth-child(1), .admin-table td:nth-child(1) { display: none; }
+      .form-grid-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="toast" class="toast"></div>
+
+<div class="navbar">
+  <div class="navbar-inner">
+    <a href="../index.html" class="nav-logo">Shop<span>Verse</span></a>
+    <div class="nav-links">
+      <a href="products.html">Products</a>
+      <a href="cart.html">🛒 Cart</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="container">
+
+    <div id="accessDenied" class="empty-state hidden">
+      <div class="icon">🔒</div>
+      <h3>Access Denied</h3>
+      <p>You need admin privileges to access this page.</p>
+      <button class="btn btn-primary" onclick="openAuthModal()" style="margin-top:16px">Login as Admin</button>
+    </div>
+
+    <div id="adminContent" class="hidden">
+
+      <div class="admin-header">
+        <h1>⚙️ Admin Panel</h1>
+        <button class="btn btn-primary" onclick="openProductModal()">+ Add Product</button>
+      </div>
+
+      <div class="stats-grid" id="statsGrid">
+        <div class="loader-wrap" style="grid-column:1/-1"><div class="spinner"></div></div>
+      </div>
+
+      <div class="table-header">
+        <h3>All Products</h3>
+        <input type="text" id="adminSearch" class="search-input" placeholder="🔍 Filter products…" oninput="filterTable()" />
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="adminTable">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Featured</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="productsTbody">
+            <tr><td colspan="7" style="text-align:center;padding:2rem">
+              <div class="spinner" style="margin:0 auto"></div>
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<div id="productModal" class="modal-overlay hidden">
+  <div class="modal">
+    <button class="modal-close" onclick="closeProductModal()">×</button>
+    <h2 id="modalTitle">Add Product</h2>
+    <p class="modal-sub" id="modalSubtitle">Fill in product details below.</p>
+    <div id="modalErr" class="form-error hidden" style="margin-bottom:14px"></div>
+
+    <input type="hidden" id="editProductId" />
+
+    <div class="form-group">
+      <label>Product Name *</label>
+      <input type="text" id="pName" placeholder="e.g. Wireless Headphones" />
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label>Price (PKR) *</label>
+        <input type="number" id="pPrice" placeholder="e.g. 4999" min="0" />
+      </div>
+      <div class="form-group">
+        <label>Stock *</label>
+        <input type="number" id="pStock" placeholder="e.g. 50" min="0" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Category *</label>
+      <select id="pCategory">
+        <option value="">-- Select Category --</option>
+        <option>Electronics</option>
+        <option>Clothing</option>
+        <option>Books</option>
+        <option>Home & Garden</option>
+        <option>Sports</option>
+        <option>Beauty</option>
+        <option>Toys</option>
+        <option>Automotive</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Image URL *</label>
+      <input type="url" id="pImage" placeholder="https://… or http://localhost:5000/images/…" />
+    </div>
+
+    <div class="form-group">
+      <label>Description *</label>
+      <textarea id="pDesc" placeholder="Describe the product…"></textarea>
+    </div>
+
+    <div class="form-group" style="display:flex;align-items:center;gap:10px">
+      <input type="checkbox" id="pFeatured" style="width:18px;height:18px;accent-color:#127FFF" />
+      <label for="pFeatured" style="margin:0;cursor:pointer;font-weight:500">Mark as Featured Product</label>
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label>Rating (0–5)</label>
+        <input type="number" id="pRating" placeholder="4.5" min="0" max="5" step="0.1" />
+      </div>
+      <div class="form-group">
+        <label>Num Reviews</label>
+        <input type="number" id="pReviews" placeholder="100" min="0" />
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-block" id="saveProductBtn" onclick="saveProduct()">
+      💾 Save Product
+    </button>
+  </div>
+</div>
+
+<script type="module">
+  import {
+    isLoggedIn, isAdmin, apiFetch, formatPrice, showToast, logout, openAuthModal
+  } from '../js/main.js';
+
+  window.logout = logout;
+  window.openAuthModal = openAuthModal;
+
+  let allProducts = [];
+
+  function checkAccess() {
+    if (!isLoggedIn() || !isAdmin()) {
+      document.getElementById('accessDenied').classList.remove('hidden');
+    } else {
+      document.getElementById('adminContent').classList.remove('hidden');
+      loadStats();
+      loadAdminProducts();
+    }
+  }
+
+  async function loadStats() {
+    try {
+      const data = await apiFetch('/products?limit=1000');
+      const products = data.products;
+      const featured = products.filter(p => p.featured).length;
+      const outStock = products.filter(p => p.stock === 0).length;
+      const cats = [...new Set(products.map(p => p.category))].length;
+
+      document.getElementById('statsGrid').innerHTML = `
+        <div class="stat-card">
+          <div class="stat-icon">📦</div>
+          <div><div class="stat-val">${data.total}</div><div class="stat-label">Total Products</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⭐</div>
+          <div><div class="stat-val">${featured}</div><div class="stat-label">Featured</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">❌</div>
+          <div><div class="stat-val">${outStock}</div><div class="stat-label">Out of Stock</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🏷️</div>
+          <div><div class="stat-val">${cats}</div><div class="stat-label">Categories</div></div>
+        </div>
+      `;
+    } catch(err) {
+      document.getElementById('statsGrid').innerHTML = '';
+    }
+  }
+
+  async function loadAdminProducts() {
+    try {
+      const data = await apiFetch('/products?limit=1000');
+      allProducts = data.products;
+      renderTable(allProducts);
+    } catch(err) {
+      document.getElementById('productsTbody').innerHTML =
+        `<tr><td colspan="7" style="color:#DC2626;padding:1rem;text-align:center">Failed: ${err.message}</td></tr>`;
+    }
+  }
+
+  function renderTable(products) {
+    const tbody = document.getElementById('productsTbody');
+    if (!products.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:#8B96A5">No products found</td></tr>';
+      return;
+    }
+    tbody.innerHTML = products.map(p => `
+      <tr>
+        <td><img src="${p.image.startsWith('http') ? p.image : 'http://localhost:5000/' + p.image}"
+             alt="${p.name}" onerror="this.style.background='#f0f0f0'" /></td>
+        <td style="font-weight:500;max-width:200px">${p.name}</td>
+        <td><span class="badge badge-primary">${p.category}</span></td>
+        <td style="font-weight:600">${formatPrice(p.price)}</td>
+        <td>
+          <span class="badge ${p.stock > 0 ? 'badge-success' : 'badge-danger'}">
+            ${p.stock > 0 ? p.stock + ' left' : 'Out of Stock'}
+          </span>
+        </td>
+        <td>${p.featured ? '⭐ Yes' : '—'}</td>
+        <td>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-outline btn-sm" onclick="window.openEditModal('${p._id}')">✏️ Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="window.deleteProduct('${p._id}','${p.name.replace(/'/g,"\\'")}')">🗑️</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  window.filterTable = function() {
+    const q = document.getElementById('adminSearch').value.toLowerCase();
+    renderTable(allProducts.filter(p =>
+      p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q)
+    ));
+  };
+
+  window.openProductModal = function(product = null) {
+    document.getElementById('editProductId').value = product?._id || '';
+    document.getElementById('modalTitle').textContent = product ? 'Edit Product' : 'Add Product';
+    document.getElementById('pName').value     = product?.name        || '';
+    document.getElementById('pPrice').value    = product?.price       || '';
+    document.getElementById('pStock').value    = product?.stock       || '';
+    document.getElementById('pCategory').value = product?.category    || '';
+    document.getElementById('pImage').value    = product?.image       || '';
+    document.getElementById('pDesc').value     = product?.description || '';
+    document.getElementById('pFeatured').checked = product?.featured  || false;
+    document.getElementById('pRating').value   = product?.rating      || '';
+    document.getElementById('pReviews').value  = product?.numReviews  || '';
+    document.getElementById('modalErr').classList.add('hidden');
+    document.getElementById('productModal').classList.remove('hidden');
+  };
+
+  window.closeProductModal = function() {
+    document.getElementById('productModal').classList.add('hidden');
+  };
+
+  window.openEditModal = function(id) {
+    const product = allProducts.find(p => p._id === id);
+    if (product) window.openProductModal(product);
+  };
+
+  window.saveProduct = async function() {
+    const id = document.getElementById('editProductId').value;
+    const errEl = document.getElementById('modalErr');
+
+    const body = {
+      name:        document.getElementById('pName').value.trim(),
+      price:       Number(document.getElementById('pPrice').value),
+      stock:       Number(document.getElementById('pStock').value),
+      category:    document.getElementById('pCategory').value,
+      image:       document.getElementById('pImage').value.trim(),
+      description: document.getElementById('pDesc').value.trim(),
+      featured:    document.getElementById('pFeatured').checked,
+      rating:      Number(document.getElementById('pRating').value) || 0,
+      numReviews:  Number(document.getElementById('pReviews').value) || 0,
+    };
+
+    if (!body.name || !body.price || !body.category || !body.image || !body.description) {
+      errEl.textContent = 'Please fill in all required fields.';
+      errEl.classList.remove('hidden');
+      return;
+    }
+
+    const btn = document.getElementById('saveProductBtn');
+    btn.disabled = true; btn.textContent = 'Saving…';
+
+    try {
+      if (id) {
+        await apiFetch(`/products/${id}`, { method: 'PUT', body: JSON.stringify(body) });
+        showToast('Product updated successfully ✅', 'success');
+      } else {
+        await apiFetch('/products', { method: 'POST', body: JSON.stringify(body) });
+        showToast('Product added successfully ✅', 'success');
+      }
+      window.closeProductModal();
+      loadStats();
+      loadAdminProducts();
+    } catch(err) {
+      errEl.textContent = err.message;
+      errEl.classList.remove('hidden');
+    } finally {
+      btn.disabled = false; btn.textContent = '💾 Save Product';
+    }
+  };
+
+  window.deleteProduct = async function(id, name) {
+    if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+    try {
+      await apiFetch(`/products/${id}`, { method: 'DELETE' });
+      showToast(`"${name}" deleted`);
+      loadStats();
+      loadAdminProducts();
+    } catch(err) {
+      showToast(err.message, 'error');
+    }
+  };
+
+  document.addEventListener('DOMContentLoaded', checkAccess);
+</script>
+</body>
+</html>

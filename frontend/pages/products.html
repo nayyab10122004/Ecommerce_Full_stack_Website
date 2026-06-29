@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShopVerse — Products</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#F7FAFC;color:#1C1C1C;padding:16px}
+ 
+    .search-bar{background:#fff;border:1px solid #E3E8EE;border-radius:12px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+    .search-bar input{flex:1;border:none;background:transparent;font-size:15px;color:#1C1C1C;outline:none}
+    .search-bar input::placeholder{color:#A9B4CD}
+    .search-btn{background:#127FFF;color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer}
+    .search-btn:hover{background:#0B66D6}
+    .search-tags{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+    .stag{padding:4px 14px;border-radius:20px;font-size:13px;cursor:pointer;border:1px solid #E3E8EE;background:#F7FAFC;color:#6B7280}
+    .stag.active{background:#127FFF;color:#fff;border-color:#127FFF}
+ 
+    .layout{display:grid;grid-template-columns:240px 1fr;gap:20px}
+    .sidebar{display:flex;flex-direction:column;gap:0}
+ 
+    .filter-section{border-top:1px solid #E3E8EE;padding:14px 0}
+    .filter-section:first-child{border-top:none;padding-top:0}
+    .filter-header{display:flex;justify-content:space-between;align-items:center;cursor:pointer;margin-bottom:10px}
+    .filter-header span{font-size:14px;font-weight:600;color:#1C1C1C}
+    .filter-header i{font-size:13px;color:#8B96A5;transition:transform 0.2s}
+    .filter-header i.open{transform:rotate(180deg)}
+    .filter-body{display:flex;flex-direction:column;gap:8px}
+    .filter-body.hidden{display:none}
+ 
+    .cat-item{font-size:13px;color:#505050;cursor:pointer;padding:3px 0}
+    .cat-item:hover,.cat-item.active{color:#127FFF}
+    .cat-item.active{font-weight:600}
+ 
+    .check-item,.radio-item{display:flex;align-items:center;gap:9px;font-size:13px;color:#505050;cursor:pointer}
+    .check-item input,.radio-item input{accent-color:#127FFF;width:16px;height:16px;cursor:pointer}
+ 
+    .price-inputs{display:flex;gap:8px;margin-top:4px}
+    .price-inputs>div{flex:1}
+    .price-inputs label{font-size:12px;color:#8B96A5;display:block;margin-bottom:4px}
+    .price-inputs input{width:100%;padding:6px 10px;border:1px solid #E3E8EE;border-radius:6px;background:#fff;font-size:13px;color:#1C1C1C}
+    .apply-btn{width:100%;margin-top:10px;padding:8px;border:1px solid #E3E8EE;color:#127FFF;background:#fff;border-radius:6px;font-size:13px;cursor:pointer}
+    .apply-btn:hover{background:#F7FAFC}
+ 
+    .star-item{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px}
+    .star-item input{accent-color:#127FFF;width:16px;height:16px;cursor:pointer}
+    .stars-label{color:#FF9017;font-size:13px;letter-spacing:1px}
+    .stars-label span{color:#8B96A5}
+ 
+    .active-filters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+    .filter-tag{display:flex;align-items:center;gap:5px;background:#EBF4FF;color:#127FFF;border-radius:20px;padding:3px 10px;font-size:12px}
+    .filter-tag button{background:none;border:none;cursor:pointer;color:#127FFF;font-size:14px;padding:0;line-height:1}
+ 
+    .products{display:flex;flex-direction:column;gap:12px}
+    .product-card{background:#fff;border:1px solid #E3E8EE;border-radius:12px;padding:16px;display:flex;gap:16px;transition:box-shadow 0.2s}
+    .product-card:hover{box-shadow:0 4px 12px rgba(0,0,0,0.08)}
+    .rating-badge{display:flex;flex-direction:column;align-items:center;background:#F7FAFC;border-radius:8px;padding:8px 10px;min-width:54px;align-self:flex-start;flex-shrink:0}
+    .badge-score{font-size:20px;font-weight:700;line-height:1.2;color:#1C1C1C}
+    .badge-stars{color:#FF9017;font-size:11px;letter-spacing:1px}
+    .badge-reviews{font-size:11px;color:#8B96A5;margin-top:2px;text-align:center}
+    .prod-img{width:160px;height:160px;border-radius:8px;object-fit:cover;flex-shrink:0;background:#F7FAFC}
+    .prod-info{flex:1;min-width:0}
+    .prod-title{font-size:15px;font-weight:500;color:#1C1C1C;margin-bottom:6px;line-height:1.4;cursor:pointer}
+    .prod-title:hover{color:#127FFF}
+    .prod-price{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}
+    .price-now{font-size:18px;font-weight:600;color:#1C1C1C}
+    .price-old{font-size:13px;color:#A9B4CD;text-decoration:line-through}
+    .prod-meta{display:flex;align-items:center;gap:8px;font-size:13px;color:#8B96A5;margin-bottom:8px;flex-wrap:wrap}
+    .prod-desc{font-size:13px;color:#505050;line-height:1.6;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .view-link{font-size:13px;color:#127FFF;font-weight:500;cursor:pointer;background:none;border:none;padding:0;font-family:inherit}
+    .view-link:hover{text-decoration:underline}
+    .no-results{text-align:center;padding:40px;color:#8B96A5;font-size:14px}
+ 
+    .see-more-wrap{text-align:center;margin-top:16px}
+    .see-more-btn{background:#fff;border:1px solid #127FFF;color:#127FFF;padding:10px 40px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s}
+    .see-more-btn:hover{background:#127FFF;color:#fff}
+    .results-count{font-size:13px;color:#8B96A5;margin-bottom:8px}
+ 
+    .newsletter-section{background-color:#eff2f4;text-align:center;padding:40px 20px;}
+    .newsletter-section h3{margin:0 0 10px 0;font-size:20px}
+    .newsletter-section p{color:#606060;margin:0 0 20px 0;font-size:14px}
+    .newsletter-form{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+    .newsletter-form input{padding:10px 15px;border:1px solid #dee2e6;border-radius:6px;width:300px;max-width:100%}
+    .newsletter-form button{padding:10px 20px;background-color:#0d6efd;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:bold}
+ 
+    .main-footer{background-color:white;border-top:1px solid #dee2e6;padding:40px 0}
+    .footer-grid{display:grid;grid-template-columns:2fr repeat(4, 1fr);gap:40px;max-width:1200px;margin:0 auto;padding:0 20px}
+    .brand-col .brand-logo{color:#0d6efd;font-size:22px;font-weight:bold;margin-bottom:15px}
+    .brand-col p{font-size:14px;color:#505050;line-height:1.5}
+    .footer-col h4{font-size:16px;margin-bottom:15px;color:#1c1c1c}
+    .footer-col ul{list-style:none;padding:0;margin:0}
+    .footer-col ul li{margin-bottom:10px}
+    .footer-col ul li a{text-decoration:none;color:#8b96a5;font-size:14px}
+    .footer-col ul li a:hover{color:#0d6efd}
+    .footer-bottom{background-color:#eff2f4;padding:20px 0;font-size:14px;color:#606060;text-align:center}
+ 
+    @media(max-width:768px){
+      .layout{grid-template-columns:1fr}
+      .sidebar{display:none}
+      .prod-img{width:120px;height:120px}
+      .footer-grid{grid-template-columns:1fr 1fr}
+    }
+  </style>
+</head>
+<body>
+  <div id="navbar"></div>
+ 
+  <div class="search-bar">
+    <i class="ti ti-search" style="color:#8B96A5;font-size:18px"></i>
+    <input type="text" id="searchInput" placeholder="Search for products, brands, categories...">
+    <button class="search-btn" onclick="applyFilters()">Search</button>
+  </div>
+ 
+  <div class="search-tags">
+    <span class="stag active" onclick="setSearchTag(this,'')">All</span>
+    <span class="stag" onclick="setSearchTag(this,'electronics')">Electronics</span>
+    <span class="stag" onclick="setSearchTag(this,'clothing')">Clothing</span>
+    <span class="stag" onclick="setSearchTag(this,'home')">Home</span>
+    <span class="stag" onclick="setSearchTag(this,'audio')">Audio</span>
+  </div>
+ 
+  <div class="layout" style="margin-top:16px">
+    <aside class="sidebar">
+      <div class="filter-section">
+        <div class="filter-header" onclick="toggleSection(this)">
+          <span>Category</span><i class="ti ti-chevron-up open"></i>
+        </div>
+        <div class="filter-body">
+          <div class="cat-item active" onclick="setCat(this,'')">All Products</div>
+          <div class="cat-item" onclick="setCat(this,'electronics')">Electronics</div>
+          <div class="cat-item" onclick="setCat(this,'clothing')">Clothing</div>
+          <div class="cat-item" onclick="setCat(this,'home & garden')">Home & Garden</div>
+        </div>
+      </div>
+ 
+      <div class="filter-section">
+        <div class="filter-header" onclick="toggleSection(this)">
+          <span>Brands</span><i class="ti ti-chevron-up open"></i>
+        </div>
+        <div class="filter-body">
+          <label class="check-item"><input type="checkbox" class="brand-cb" value="apple" onchange="applyFilters()"><span>Apple</span></label>
+          <label class="check-item"><input type="checkbox" class="brand-cb" value="sony" onchange="applyFilters()"><span>Sony</span></label>
+          <label class="check-item"><input type="checkbox" class="brand-cb" value="samsung" onchange="applyFilters()"><span>Samsung</span></label>
+          <label class="check-item"><input type="checkbox" class="brand-cb" value="generic" onchange="applyFilters()"><span>Generic</span></label>
+        </div>
+      </div>
+ 
+      <div class="filter-section">
+        <div class="filter-header" onclick="toggleSection(this)">
+          <span>Features</span><i class="ti ti-chevron-up open"></i>
+        </div>
+        <div class="filter-body">
+          <label class="check-item"><input type="checkbox" class="feat-cb" value="Wireless" onchange="applyFilters()"><span>Wireless</span></label>
+          <label class="check-item"><input type="checkbox" class="feat-cb" value="Noise Cancelling" onchange="applyFilters()"><span>Noise cancelling</span></label>
+          <label class="check-item"><input type="checkbox" class="feat-cb" value="USB-C" onchange="applyFilters()"><span>USB-C</span></label>
+        </div>
+      </div>
+ 
+      <div class="filter-section">
+        <div class="filter-header" onclick="toggleSection(this)">
+          <span>Price range</span><i class="ti ti-chevron-up open"></i>
+        </div>
+        <div class="filter-body">
+          <div class="price-inputs">
+            <div><label>Min (Rs.)</label><input type="number" id="minPrice" value="0" min="0" oninput="applyFilters()"></div>
+            <div><label>Max (Rs.)</label><input type="number" id="maxPrice" value="100000" min="0" oninput="applyFilters()"></div>
+          </div>
+          <button class="apply-btn" onclick="applyFilters()">Apply</button>
+        </div>
+      </div>
+ 
+      <div class="filter-section">
+        <div class="filter-header" onclick="toggleSection(this)">
+          <span>Customer rating</span><i class="ti ti-chevron-up open"></i>
+        </div>
+        <div class="filter-body" style="gap:10px">
+          <label class="star-item"><input type="checkbox" class="rat-cb" value="4.5" onchange="applyFilters()"><span class="stars-label">★★★★★ <span>& up</span></span></label>
+          <label class="star-item"><input type="checkbox" class="rat-cb" value="4" onchange="applyFilters()"><span class="stars-label">★★★★☆ <span>& up</span></span></label>
+          <label class="star-item"><input type="checkbox" class="rat-cb" value="3" onchange="applyFilters()"><span class="stars-label">★★★☆☆ <span>& up</span></span></label>
+        </div>
+      </div>
+    </aside>
+ 
+    <main>
+      <div class="active-filters" id="activeTags"></div>
+      <div class="results-count" id="resultsCount"></div>
+      <div class="products" id="productList"></div>
+      <div class="see-more-wrap" id="seeMoreWrap" style="display:none">
+        <button class="see-more-btn" onclick="loadMore()">See more products ↓</button>
+      </div>
+    </main>
+  </div>
+ 
+  <div class="newsletter-section">
+    <h3>Subscribe on our newsletter</h3>
+    <p>Get daily news on upcoming offers from many suppliers all over the world</p>
+    <div class="newsletter-form">
+      <input type="email" placeholder="Email" required>
+      <button type="submit">Subscribe</button>
+    </div>
+  </div>
+ 
+  <footer class="main-footer">
+    <div class="footer-grid">
+      <div class="brand-col">
+        <div class="brand-logo">ShopVerse</div>
+        <p>Best information about the company gives here but now lorem ipsum is</p>
+      </div>
+      <div class="footer-col">
+        <h4>About</h4>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Find store</a></li>
+          <li><a href="#">Categories</a></li>
+          <li><a href="#">Blogs</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Partnership</h4>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Find store</a></li>
+          <li><a href="#">Categories</a></li>
+          <li><a href="#">Blogs</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Information</h4>
+        <ul>
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">Money Refund</a></li>
+          <li><a href="#">Shipping</a></li>
+          <li><a href="#">Contact us</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>For users</h4>
+        <ul>
+          <li><a href="#">Login</a></li>
+          <li><a href="#">Register</a></li>
+          <li><a href="#">Settings</a></li>
+          <li><a href="#">My Orders</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 ShopVerse. All rights reserved.</div>
+  </footer>
+ 
+  <script>
+    const API = 'http://localhost:5000/api';
+ 
+    let products = [];
+    let visibleCount = 6;
+    let filteredProducts = [];
+    let activeCategory = "";
+    let activeSearchTag = "";
+ 
+    function injectNavbar() {
+      const nav = document.getElementById('navbar');
+      if (!nav) return;
+      nav.innerHTML = `
+        <nav style="background:white;padding:10px 20px;border-bottom:1px solid #E3E8EE;margin-bottom:20px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;max-width:1200px;margin:0 auto;">
+            <a href="/index.html" style="font-size:24px;font-weight:bold;color:#127FFF;text-decoration:none;">
+              Shop<span style="color:#1C1C1C;">Verse</span>
+            </a>
+            <div style="display:flex;gap:20px;align-items:center;">
+              <a href="products.html" style="color:#127FFF;text-decoration:none;font-weight:500;">Products</a>
+              <a href="cart.html" style="color:#1C1C1C;text-decoration:none;">🛒</a>
+            </div>
+          </div>
+        </nav>
+      `;
+    }
+ 
+    function starsStr(r) {
+      let s = "";
+      for (let i = 1; i <= 5; i++) s += r >= i ? "★" : (r >= i - 0.5 ? "★" : "☆");
+      return s;
+    }
+ 
+    function viewDetails(id) {
+      window.location.href = `product-detail.html?id=${encodeURIComponent(id)}`;
+    }
+ 
+    async function fetchProducts() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const urlSearch = params.get('search') || '';
+        const urlCat = params.get('cat') || '';
+ 
+        let fetchURL = API + '/products?limit=100';
+        if (urlSearch) fetchURL += `&search=${encodeURIComponent(urlSearch)}`;
+        if (urlCat) fetchURL += `&category=${encodeURIComponent(urlCat)}`;
+ 
+        const response = await fetch(fetchURL);
+        if (!response.ok) throw new Error('Failed to fetch products');
+ 
+        const data = await response.json();
+        if (!data.success) throw new Error(data.message || 'Failed to fetch products');
+ 
+        return data.products.map(p => ({
+          _id: p._id,
+          title: p.name,
+          price: p.price,
+          oldPrice: p.oldPrice || null,
+          rating: p.rating || 0,
+          score: p.rating || 0,
+          reviews: p.numReviews || 0,
+          orders: p.orders || 0,
+          ship: p.ship !== undefined ? p.ship : (p.stock ?? 0) > 0,
+          condition: p.condition || 'new',
+          category: (p.category || '').toString().toLowerCase(),
+          features: p.features || [],
+          brand: (p.brand || 'generic').toString().toLowerCase(),
+          img: p.image
+            ? (p.image.startsWith('http') ? p.image : 'http://localhost:5000/' + p.image)
+            : '',
+          desc: p.description || '',
+          tags: ((p.category || '') + ' ' + (p.name || '') + ' ' + (p.tags || '')).toLowerCase()
+        }));
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        throw error;
+      }
+    }
+ 
+    function renderCards() {
+      const el = document.getElementById('productList');
+      const seeMoreWrap = document.getElementById('seeMoreWrap');
+      const countEl = document.getElementById('resultsCount');
+ 
+      const toShow = filteredProducts.slice(0, visibleCount);
+      countEl.textContent = filteredProducts.length + " products found";
+ 
+      if (!filteredProducts.length) {
+        el.innerHTML = '<div class="no-results">No products match your filters.</div>';
+        seeMoreWrap.style.display = 'none';
+        return;
+      }
+ 
+      el.innerHTML = toShow.map(p => `
+        <div class="product-card">
+          <div class="rating-badge">
+            <span class="badge-score">${p.score}</span>
+            <span class="badge-stars">${starsStr((p.rating / 2) || 0)}</span>
+            <span class="badge-reviews">${p.reviews >= 1000 ? (p.reviews / 1000).toFixed(1) + "k" : p.reviews} reviews</span>
+          </div>
+          <img class="prod-img" src="${p.img}" alt="${p.title}" loading="lazy"
+               onerror="this.style.background='#f0f0f0'">
+          <div class="prod-info">
+            <div class="prod-title">${p.title}</div>
+            <div class="prod-price">
+              <span class="price-now">Rs. ${Number(p.price).toLocaleString()}</span>
+              ${p.oldPrice ? `<span class="price-old">Rs. ${Number(p.oldPrice).toLocaleString()}</span>` : ''}
+            </div>
+            <div class="prod-meta">
+              <span class="prod-stars">${starsStr((p.rating / 2) || 0)}</span>
+              <span class="prod-score">${p.rating}</span>
+              <span>•</span>
+              <span>${(p.orders || 0).toLocaleString()} orders</span>
+              <span>•</span>
+              ${p.ship ? '<span style="color:#22C55E;">Free Shipping</span>' : '<span style="color:#FF9017;">Delivery charges apply</span>'}
+            </div>
+            <p class="prod-desc">${p.desc}</p>
+            <button class="view-link" onclick="viewDetails('${p._id}')">View details</button>
+          </div>
+        </div>
+      `).join('');
+ 
+      seeMoreWrap.style.display = visibleCount < filteredProducts.length ? 'block' : 'none';
+    }
+ 
+    function loadMore() { visibleCount += 6; renderCards(); }
+ 
+    function getActiveBrands() { return [...document.querySelectorAll('.brand-cb:checked')].map(x => x.value.toLowerCase()); }
+    function getActiveFeats() { return [...document.querySelectorAll('.feat-cb:checked')].map(x => x.value); }
+    function getActiveRatings() { return [...document.querySelectorAll('.rat-cb:checked')].map(x => parseFloat(x.value)); }
+ 
+    function applyFilters() {
+      const searchEl = document.getElementById('searchInput');
+      const query = searchEl ? searchEl.value.toLowerCase().trim() : '';
+      const min = parseFloat(document.getElementById('minPrice')?.value) || 0;
+      const max = parseFloat(document.getElementById('maxPrice')?.value) || 100000;
+      const brands = getActiveBrands();
+      const feats = getActiveFeats();
+      const ratings = getActiveRatings();
+      const minRating = ratings.length ? Math.min(...ratings) : 0;
+ 
+      filteredProducts = products.filter(p => {
+        if (activeCategory && p.category !== activeCategory.toLowerCase()) return false;
+        if (brands.length && !brands.includes(p.brand)) return false;
+        if (feats.length && !feats.every(f => (p.features || []).includes(f))) return false;
+        if (p.price < min || p.price > max) return false;
+        if (minRating && ((p.rating / 2) < minRating)) return false;
+        if (activeSearchTag && !p.tags.includes(activeSearchTag)) return false;
+        if (query && !p.title.toLowerCase().includes(query) && !p.tags.includes(query)) return false;
+        return true;
+      });
+ 
+      visibleCount = 6;
+      renderCards();
+    }
+ 
+    function setCat(el, val) {
+      activeCategory = val ? val.toLowerCase() : '';
+      document.querySelectorAll('.cat-item').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      applyFilters();
+    }
+ 
+    function setSearchTag(el, val) {
+      activeSearchTag = val;
+      document.querySelectorAll('.stag').forEach(s => s.classList.remove('active'));
+      el.classList.add('active');
+      applyFilters();
+    }
+ 
+    function toggleSection(header) {
+      const body = header.nextElementSibling;
+      const icon = header.querySelector('i');
+      body.classList.toggle('hidden');
+      icon.classList.toggle('open');
+    }
+ 
+    document.addEventListener('DOMContentLoaded', async function () {
+      const searchInput = document.getElementById('searchInput');
+      if (searchInput) searchInput.addEventListener('input', applyFilters);
+ 
+      const params = new URLSearchParams(window.location.search);
+      const urlSearch = params.get('search') || '';
+      const urlCat = params.get('cat') || '';
+      if (urlSearch) activeSearchTag = urlSearch.toLowerCase();
+      if (urlCat) activeCategory = urlCat.toLowerCase();
+ 
+      injectNavbar();
+ 
+      try {
+        products = await fetchProducts();
+        filteredProducts = products;
+        applyFilters();
+        console.log('✅ Products loaded:', products.length);
+      } catch (e) {
+        const listEl = document.getElementById('productList');
+        if (listEl) listEl.innerHTML = '<div class="no-results">❌ ' + (e.message || 'Failed to load products') + '</div>';
+        console.error('❌ Init error:', e);
+      }
+    });
+ 
+    window.setCat = setCat;
+    window.setSearchTag = setSearchTag;
+    window.loadMore = loadMore;
+    window.toggleSection = toggleSection;
+    window.viewDetails = viewDetails;
+    window.applyFilters = applyFilters;
+  </script>
+</body>
+</html>
