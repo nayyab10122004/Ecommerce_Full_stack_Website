@@ -1,4 +1,8 @@
-export const API = 'http://localhost:5000/api';
+const API = "https://ecommercefullstackwebsite-production.up.railway.app/api";
+const BACKEND_URL = "https://ecommercefullstackwebsite-production.up.railway.app";
+
+
+img.src = `${BACKEND_URL}/${product.image}`;
  
 export async function apiFetch(path, options = {}) {
   const token = localStorage.getItem('sv_token');
@@ -281,12 +285,9 @@ export async function handleSignup() {
   }
 }
  
-export function renderProductCard(p) {
-  const outOfStock = p.stock === 0;
-  const imgSrc = p.image
-    ? (p.image.startsWith('http') ? p.image : `http://localhost:5000/${p.image}`)
-    : 'https://via.placeholder.com/400x300?text=No+Image';
- 
+const imgSrc = p.image
+  ? (p.image.startsWith("http") ? p.image : `${BACKEND_URL}/${p.image}`)
+  : "https://via.placeholder.com/400x300?text=No+Image";
   return `
     <div class="product-card">
       <div class="card-img">
@@ -317,7 +318,7 @@ export function renderProductCard(p) {
       </div>
     </div>
   `;
-}
+
  
 document.addEventListener('DOMContentLoaded', injectNavbar);
  
