@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>
+        // Check if user is logged in
+        const token = localStorage.getItem('sv_token');
+        const user = JSON.parse(localStorage.getItem('sv_user') || 'null');
+
+        if (!token || !user) {
+            window.location.href = 'pages/login.html';
+        }
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ecommerce Home — ShopVerse</title>
@@ -22,6 +31,7 @@
         .header-icons i:hover { color: #0d6efd; }
         .cart-wrap { position: relative; }
         .cart-badge { position: absolute; top: -8px; right: -8px; background: #eb001b; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; display: none; align-items: center; justify-content: center; }
+        .user-name { font-size: 14px; color: #1c1c1c; font-weight: 600; margin-right: 5px; }
         .sub-menu { background: white; border-bottom: 1px solid #dee2e6; padding: 12px 0; }
         .sub-menu .container { display: flex; justify-content: space-between; align-items: center; }
         .menu-links { display: flex; gap: 25px; list-style: none; }
@@ -131,6 +141,7 @@
        
         .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px); background: #065f46; color: #fff; padding: 12px 28px; border-radius: 12px; font-weight: 500; opacity: 0; transition: 0.4s ease; z-index: 2000; font-size: 14px; }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .toast.error { background: #DC2626; }
         @media (max-width: 992px) {
             .services-grid, .recommended-grid, .suppliers-grid { grid-template-columns: repeat(2, 1fr); }
             .footer-grid { grid-template-columns: repeat(2, 1fr); }
@@ -201,7 +212,8 @@
             <button class="search-btn" onclick="handleSearch()">Search</button>
         </div>
         <div class="header-icons">
-            <i class="fa-solid fa-user" onclick="window.location.href='pages/login.html'" title="Login"></i>
+            <span class="user-name" id="userNameDisplay"></span>
+            <i class="fa-solid fa-user" onclick="toggleUserMenu()" title="Account"></i>
             <i class="fa-solid fa-heart" title="Wishlist"></i>
             <div class="cart-wrap">
                 <i class="fa-solid fa-cart-shopping" onclick="window.location.href='pages/cart.html'" title="Cart"></i>
@@ -580,9 +592,10 @@
         closeModal();
     }
 
-    function showToast(msg) {
+    function showToast(msg, type = '') {
         const t = document.getElementById('toast');
         t.textContent = msg;
+        t.className = 'toast' + (type === 'error' ? ' error' : '');
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 2600);
     }
@@ -646,11 +659,41 @@
 
     function subscribeNewsletter() {
         const email = document.getElementById('newsletterEmail').value.trim();
-        if (!email || !email.includes('@')) { alert('Please enter a valid email.'); return; }
+        if (!email || !email.includes('@')) { 
+            showToast('Please enter a valid email.', 'error');
+            return; 
+        }
         showToast('Subscribed! Thank you, ' + email);
         document.getElementById('newsletterEmail').value = '';
     }
 
+    function toggleUserMenu() {
+        const user = JSON.parse(localStorage.getItem('sv_user') || 'null');
+        if (user) {
+            if (confirm('Logout, ' + user.name + '?')) {
+                localStorage.removeItem('sv_token');
+                localStorage.removeItem('sv_user');
+                showToast('Logged out successfully!');
+                setTimeout(() => {
+                    window.location.href = 'pages/login.html';
+                }, 500);
+            }
+        } else {
+            window.location.href = 'pages/login.html';
+        }
+    }
+
+    // Display username in header
+    function displayUserName() {
+        const user = JSON.parse(localStorage.getItem('sv_user') || 'null');
+        const nameDisplay = document.getElementById('userNameDisplay');
+        if (user && nameDisplay) {
+            nameDisplay.textContent = '👋 ' + user.name;
+        }
+    }
+
+    // Initialize
+    displayUserName();
     updateCartBadge();
 </script>
 </body>
